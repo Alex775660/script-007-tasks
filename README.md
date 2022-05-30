@@ -13,12 +13,25 @@ Author is AUTHOR_NAME.
 - [ ] Specify directory to keep manage files via CLI arguments
 - [ ] Cover functionality using `pytest`
 - [ ] Deploy via Docker image (for those who is familiar with Docker)
+<<<<<<< HEAD
+=======
+- [ ] Use `logging` module for logging
+>>>>>>> c19f162 (Add 01_prepare_env)
 
 ## File Service
 
 - [ ] Avoid usage of dangerous values like `../../../etc/passwd`
 - [ ] Support binary file content as well
 
+<<<<<<< HEAD
+=======
+## Configuration
+
+- [ ] Read settings from CLI arguments
+- [ ] Read settings from env vars
+- [ ] Read settings from config file
+
+>>>>>>> c19f162 (Add 01_prepare_env)
 ## Web Service
 
 - [ ] Specify web-server port via CLI arguments
