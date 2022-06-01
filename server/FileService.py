@@ -1,7 +1,6 @@
 import os
-import sys
-import traceback
 import time
+import utils.files as file_exception
 
 class ServiceServer:
     def change_dir(self, path: str, autocreate: bool = True) -> None:
@@ -16,22 +15,15 @@ class ServiceServer:
             ValueError: if path is invalid.
         """
 
-        #pass
-        try:
-            if type(path) != str:
-                raise TypeError(f'incorrect type: {type(path)}')
-            elif not os.path.exists(self.root_dir + "\\" + path) and not autocreate:
-                raise RuntimeError("Directory does not exist and autocreate is False")  # if directory does not exist and autocreate is False
-            elif not os.path.exists(self.root_dir + "\\" + path) and autocreate:
-                os.makedirs(self.root_dir + "\\" + path)
-                os.chdir(self.root_dir + "\\" + path)
-            else:
-                os.chdir(self.root_dir + "\\" + path)
-        except (RuntimeError, TypeError) as e:
-            print(f'error occurred: {e}')
-            print('-' * 60)
-            traceback.print_exc(file=sys.stdout)
-            print('-' * 60)
+        if type(path) != str:
+            raise TypeError(f'incorrect type: {type(path)}')
+        elif not os.path.exists(os.path.join(self.root_dir, path)) and not autocreate:
+            raise RuntimeError("Directory does not exist and autocreate is False")  # if directory does not exist and autocreate is False
+        elif not os.path.exists(os.path.join(self.root_dir, path)) and autocreate:
+            os.makedirs(os.path.join(self.root_dir, path))
+            os.chdir(os.path.join(self.root_dir, path))
+        else:
+            os.chdir(os.path.join(self.root_dir, path))
 
 
 
@@ -46,13 +38,12 @@ class ServiceServer:
             - size (int): size of file in bytes.
         """
 
-        #pass
         files = []
         for file in os.listdir(os.getcwd()):
             if os.path.isfile(os.path.join(os.getcwd(), file)):
-                files.append( 
+                files.append(
                     {
-                    'name': os.path.basename(file), 
+                    'name': os.path.basename(file),
                     'create_date': time.ctime(os.path.getctime(file)),
                     'edit_date': time.ctime(os.path.getmtime(file)),
                     'size': os.path.getsize(file)
@@ -81,25 +72,15 @@ class ServiceServer:
             ValueError: if filename is invalid.
         """
 
-        #pass
-        try:
-            if not os.path.normpath(filename).startswith(os.path.dirname(filename)):
-                raise ValueError(f'filename is invalid: {filename}')
-            elif not os.path.exists(filename):
-                raise RuntimeError("file does not exist")  # if file does not exist
-            else:
-                return {
-                    'name': filename, 
-                    'content': open(filename).read(),
-                    'create_date': time.ctime(os.path.getctime(filename)),
-                    'edit_date': time.ctime(os.path.getmtime(filename)),
-                    'size': os.path.getsize(filename)
-                    }
-        except (RuntimeError, ValueError) as e:
-            print(f'error occurred: {e}')
-            print('-' * 60)
-            traceback.print_exc(file=sys.stdout)
-            print('-' * 60)
+        file_exception.filename_is_invalid(filename)
+        file_exception.file_does_not_exist(filename)
+        return {
+                'name': filename,
+                'content': open(filename).read(),
+                'create_date': time.ctime(os.path.getctime(filename)),
+                'edit_date': time.ctime(os.path.getmtime(filename)),
+                'size': os.path.getsize(filename)
+            }
 
 
     def create_file(self, filename: str, content: str = None) -> dict:
@@ -120,26 +101,18 @@ class ServiceServer:
             ValueError: if filename is invalid.
         """
 
-        #pass
-        try:
-            if not os.path.normpath(filename).startswith(os.path.dirname(filename)):
-                raise ValueError(f'filename is invalid: {filename}')
-            elif os.path.exists(filename):
-                raise RuntimeError("file already exist")  # if file already exist
-            else:
-                with open(filename, "w") as file:
-                    file.write(content)
-                    return {
-                        'name': filename, 
-                        'content': content,
-                        'create_date': time.ctime(os.path.getctime(filename)),
-                        'size': len(content)
-                    }      
-        except (RuntimeError, ValueError) as e:
-            print(f'error occurred: {e}')
-            print('-' * 60)
-            traceback.print_exc(file=sys.stdout)
-            print('-' * 60)
+        file_exception.filename_is_invalid(filename)
+        if os.path.exists(filename):
+            raise RuntimeError("file already exist")  # if file already exist
+        else:
+            with open(filename, "w") as file:
+                file.write(content)
+                return {
+                    'name': filename,
+                    'content': content,
+                    'create_date': time.ctime(os.path.getctime(filename)),
+                    'size': len(content)
+                }
 
 
     def delete_file(self, filename: str) -> None:
@@ -153,20 +126,13 @@ class ServiceServer:
             ValueError: if filename is invalid.
         """
 
-        #pass
-        try:
-            if not os.path.normpath(filename).startswith(os.path.dirname(filename)):
-                raise ValueError(f'filename is invalid: {filename}')
-            elif not os.path.exists(filename):
-                raise RuntimeError("file does not exist")  # if file does not exist
-            else:
-                os.remove(filename)
-        except (RuntimeError, ValueError) as e:
-            print(f'error occurred: {e}')
-            print('-' * 60)
-            traceback.print_exc(file=sys.stdout)
-            print('-' * 60)
+        file_exception.filename_is_invalid(filename)
+        file_exception.file_does_not_exist(filename)
+        os.remove(filename)
 
     def __init__(self):
-        os.chdir(os.path.dirname(__file__) + "\\..\\root_dir")  #set root_dir
+        if os.path.exists(os.path.join(os.path.dirname(__file__) + "/../root_dir")):
+            os.chdir(os.path.join(os.path.dirname(__file__) + "/../root_dir"))  #set root_dir
+        else:
+            os.makedirs(os.path.join(os.path.dirname(__file__) + "/../root_dir"))
         self.root_dir = os.getcwd()
