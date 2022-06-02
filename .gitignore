@@ -6,9 +6,13 @@ __pycache__/
 .venv*/
 venv*/
 
+# Jupyter
+.ipynb_checkpoints/
+
 # Pycharm IDE
 /.idea/
 
 # VS Code IDE
 /.vscode/
 *.code-workspace
+FAQ.txt
