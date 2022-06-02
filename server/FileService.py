@@ -2,7 +2,7 @@ import os
 import time
 import utils.files as file_exception
 
-class ServiceServer:
+class FileService:
     def change_dir(self, path: str, autocreate: bool = True) -> None:
         """Change current directory of app.
 
@@ -131,8 +131,7 @@ class ServiceServer:
         os.remove(filename)
 
     def __init__(self):
-        if os.path.exists(os.path.join(os.path.dirname(__file__) + "/../root_dir")):
-            os.chdir(os.path.join(os.path.dirname(__file__) + "/../root_dir"))  #set root_dir
-        else:
-            os.makedirs(os.path.join(os.path.dirname(__file__) + "/../root_dir"))
+        if not os.path.exists(os.path.join(os.path.dirname(__file__), "/../root_dir")):
+            os.makedirs(os.path.join(os.path.dirname(__file__), "/../root_dir"))
+        os.chdir(os.path.join(os.path.dirname(__file__), "/../root_dir"))  #set root_dir
         self.root_dir = os.getcwd()

@@ -55,7 +55,7 @@ def case_test_delete_file_explicit():
 # Test suite
 class TestMyServiceServer:
 
-    serv = FileService.ServiceServer()
+    serv = FileService.FileService()
 
     # Test cases
     def test_change_dir(self, case_test_change_dir_explicit):
