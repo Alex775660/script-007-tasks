@@ -53,7 +53,7 @@ def case_test_delete_file_explicit():
 
 
 # Test suite
-class TestMyServiceServer:
+class TestMyFileService:
 
     serv = FileService.FileService()
 

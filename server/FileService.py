@@ -1,6 +1,6 @@
 import os
 import time
-import utils.files as file_exception
+import server.utils.files as file_exception
 
 class FileService:
     def change_dir(self, path: str, autocreate: bool = True) -> None:
