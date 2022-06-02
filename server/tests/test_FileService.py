@@ -1,119 +1,105 @@
+import FileService
 import os
-import shutil
-
 import pytest
-
-from server import FileService
-
-
-@pytest.fixture(scope='module', autouse=True)
-def change_test_dir():
-    old_cwd = os.getcwd()
-    os.chdir(os.path.dirname(os.path.abspath(__file__)))
-    yield
-    os.chdir(old_cwd)
+import time
 
 
-def helper_rm(path):
-    if not os.path.exists(path):
-        return
-
-    if os.path.isdir(path):
-        shutil.rmtree(path)
-    else:
-        os.remove(path)
-
-
-@pytest.fixture(scope='function', autouse=True)
-def safe_cleanup():
-    def cleanup():
-        os.chdir(os.path.dirname(os.path.abspath(__file__)))
-        helper_rm('NotExistingDirectory')
-        helper_rm('ExistingDirectory')
-
-    cleanup()  # before all tests
-    yield
-    cleanup()  # after all tests
+@pytest.fixture(scope='function')
+def case_test_change_dir_explicit():
+    print('case_test_change_dir_explicit: before test-case')
+    yield {
+        'user_data_dir': 'user\data',
+        'user_data': 'user',
+    }
+    print('case_test_change_dir_explicit: after test-case')
 
 
-class TestChangeDir:
+@pytest.fixture(scope='function')
+def case_test_create_file_explicit():
+    print('case_test_create_file_explicit: before test-case')
+    yield {
+        'hello_txt': 'hello.txt',
+        'hello_txt_data': 'hello'
+    }
+    print('case_test_create_file_explicit: after test-case')
 
-    def test_incorrect_type1(self):
-        """Передать None в качестве значения
 
-        Ожидаемый результат: возбуждение исключения TypeError
-        """
-        with pytest.raises(TypeError):
-            FileService.change_dir(None)
+@pytest.fixture(scope='function')
+def case_test_get_file_data_explicit():
+    print('case_test_get_file_data_explicit: before test-case')
+    yield {
+        'hello_txt': 'hello.txt',
+        'hello_txt_data': 'hello'
+    }
+    print('case_test_get_file_data_explicit: after test-case')
 
-    def test_incorrect_type2(self):
-        """Передать значение типа int
 
-        Ожидаемый результат: возбуждение исключения TypeError
-        """
-        with pytest.raises(TypeError):
-            FileService.change_dir(1)
+@pytest.fixture(scope='function')
+def case_test_get_files_explicit():
+    print('case_test_get_files_explicit: before test-case')
+    yield {
+        'hello_txt': 'hello.txt',
+    }
+    print('case_test_get_files_explicit: after test-case')
 
-    def test_dot_dir(self):
-        """Передать . в качестве значения,
 
-        Ожидаемый результат: текущая папка не должна измениться
-        """
-        old_cwd = os.getcwd()
-        FileService.change_dir('.')
-        assert old_cwd == os.getcwd()
+@pytest.fixture(scope='function')
+def case_test_delete_file_explicit():
+    print('case_test_delete_file_explicit: before test-case')
+    yield {
+        'hello_txt': 'hello.txt',
+    }
+    print('case_test_delete_file_explicit: after test-case')
 
-    def test_incorrect_value2(self):
-        """Передать .. в качестве значения
 
-        Ожидаемый результат: возбуждение исключения ValueError
-        """
-        with pytest.raises(ValueError):
-            FileService.change_dir('..')
+# Test suite
+class TestMyFileService:
 
-    def test_incorrect_value3(self):
-        """Передать ../something в качестве значения
+    serv = FileService.FileService()
 
-        Ожидаемый результат: возбуждение исключения ValueError
-        """
-        with pytest.raises(ValueError):
-            FileService.change_dir('../something')
+    # Test cases
+    def test_change_dir(self, case_test_change_dir_explicit):
+        assert case_test_change_dir_explicit['user_data_dir'] == 'user\data'
+        assert case_test_change_dir_explicit['user_data'] == 'user'
 
-    def test_existing_dir_no_create(self):
-        """Перейти в каталог, который уже существует и autocreate=False
+        self.serv.change_dir(case_test_change_dir_explicit['user_data_dir'])
+        assert os.getcwd() == os.path.join(self.serv.root_dir, case_test_change_dir_explicit['user_data_dir'])
+        self.serv.change_dir(case_test_change_dir_explicit['user_data'])
+        assert os.getcwd() == os.path.join(self.serv.root_dir, case_test_change_dir_explicit['user_data'])
 
-        Ожидаемый результат: текущая папка имеет имя ExistingDirectory
-        """
-        os.mkdir('ExistingDirectory')
-        FileService.change_dir('ExistingDirectory', autocreate=False)
-        cwd = os.getcwd()
-        assert os.path.basename(cwd) == 'ExistingDirectory'
 
-    def test_existing_dir_create(self):
-        """Перейти в каталог, который уже существует и autocreate=True
+    def test_create_file(self, case_test_create_file_explicit):
+        assert case_test_create_file_explicit['hello_txt'] == 'hello.txt'
+        assert case_test_create_file_explicit['hello_txt_data'] == 'hello'
 
-        Ожидаемый результат: текущая папка имеет имя ExistingDirectory
-        """
-        os.mkdir('ExistingDirectory')
-        FileService.change_dir('ExistingDirectory', autocreate=True)
-        cwd = os.getcwd()
-        assert os.path.basename(cwd) == 'ExistingDirectory'
+        assert os.path.exists(self.serv.root_dir)
+        assert not os.path.exists(os.path.join(os.getcwd(), case_test_create_file_explicit['hello_txt']))
+        self.serv.create_file(case_test_create_file_explicit['hello_txt'], case_test_create_file_explicit['hello_txt_data'])
+        assert os.path.isfile(os.path.join(os.getcwd(), case_test_create_file_explicit['hello_txt']))
 
-    def test_non_existing_dir_no_create(self):
-        """Перейти в каталог, который не существует и autocreate=False
 
-        Ожидаемый результат: текущая папка имеет имя отличное от NotExistingDirectory
-        """
-        with pytest.raises(RuntimeError):
-            FileService.change_dir('NotExistingDirectory', autocreate=False)
-        cwd = os.getcwd()
-        assert os.path.basename(cwd) != 'NotExistingDirectory'
+    def test_get_file_data(self, case_test_get_file_data_explicit):
+        assert case_test_get_file_data_explicit['hello_txt'] == 'hello.txt'
+        assert case_test_get_file_data_explicit['hello_txt_data'] == 'hello'
 
-    def test_non_existing_dir_create(self):
-        """Перейти в каталог, который не существует и autocreate=True
+        file_data = self.serv.get_file_data(case_test_get_file_data_explicit['hello_txt'])
+        assert file_data['name'] == case_test_get_file_data_explicit['hello_txt']
+        assert file_data['content'] == case_test_get_file_data_explicit['hello_txt_data']
+        assert file_data['create_date'] == time.ctime(os.path.getctime(os.path.join(os.getcwd(), case_test_get_file_data_explicit['hello_txt'])))
+        assert file_data['edit_date'] == time.ctime(os.path.getmtime(os.path.join(os.getcwd(), case_test_get_file_data_explicit['hello_txt'])))
+        assert file_data['size'] == os.path.getsize(os.path.join(os.getcwd(), case_test_get_file_data_explicit['hello_txt']))
 
-        Ожидаемый результат: текущая папка имеет имя отличное от NotExistingDirectory
-        """
-        FileService.change_dir('NotExistingDirectory', autocreate=True)
-        cwd = os.getcwd()
-        assert os.path.basename(cwd) == 'NotExistingDirectory'
+
+    def test_get_files(self, case_test_get_files_explicit):
+        assert case_test_get_files_explicit['hello_txt'] == 'hello.txt'
+
+        list_files = self.serv.get_files()
+        assert len(list_files) == 1
+        assert list_files[len(list_files) - 1]['name'] == case_test_get_files_explicit['hello_txt']
+
+
+    def test_delete_file(self, case_test_delete_file_explicit):
+        assert case_test_delete_file_explicit['hello_txt'] == 'hello.txt'
+
+        self.serv.delete_file(case_test_delete_file_explicit['hello_txt'])
+        assert not os.path.exists(os.path.join(os.getcwd(), case_test_delete_file_explicit['hello_txt']))

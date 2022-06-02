@@ -1,6 +1,6 @@
 import os
 import time
-import utils.files as file_exception
+import server.utils.files as file_exception
 
 class FileService:
     def change_dir(self, path: str, autocreate: bool = True) -> None:
@@ -131,7 +131,7 @@ class FileService:
         os.remove(filename)
 
     def __init__(self):
-        if not os.path.exists(os.path.join(os.path.dirname(__file__), "/../root_dir")):
-            os.makedirs(os.path.join(os.path.dirname(__file__), "/../root_dir"))
-        os.chdir(os.path.join(os.path.dirname(__file__), "/../root_dir"))  #set root_dir
+        if not os.path.exists(os.path.dirname(__file__) + "/../root_dir"):
+            os.makedirs(os.path.dirname(__file__) + "/../root_dir")
+        os.chdir(os.path.dirname(__file__) + "/../root_dir")  #set root_dir
         self.root_dir = os.getcwd()
