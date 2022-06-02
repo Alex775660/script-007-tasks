@@ -12,14 +12,13 @@ def main():
         '--dir',
         type=str,
         default="",
-        help='Start User\'s directory name',
+        help="Start User's directory name",
     )
     parser.add_argument(
-        '-logset',
         '--logger-settings',
         type=str,
         default=os.path.dirname(__file__) + "/server/logger_default_settings.json",
-        help='Path to logger\'s settings file',
+        help="Path to logger's settings file",
     )
     params = parser.parse_args()
 
