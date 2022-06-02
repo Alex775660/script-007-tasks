@@ -1,6 +1,10 @@
 # python
 *.pyc
 __pycache__/
+.pytest_cache/
+
+# Log file
+*.log
 
 # virtual environment
 .venv*/
@@ -15,4 +19,7 @@ venv*/
 # VS Code IDE
 /.vscode/
 *.code-workspace
+
+# default data folder
+/root_dir/
 FAQ.txt
