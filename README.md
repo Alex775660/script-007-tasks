@@ -1,7 +1,6 @@
+# WebAlex project
 
-# File server project
-
-Author is Maxim Suslov.
+Author is Alex775660.
 
 # Requirements
 
@@ -21,6 +20,7 @@ Author is Maxim Suslov.
 - [ ] Support binary file content as well
 
 ## Configuration
+
 
 - [x] Read settings from CLI arguments
 - [ ] Read settings from env vars

@@ -3,6 +3,7 @@
 __pycache__/
 .pytest_cache/
 
+
 # virtual environment
 .venv*/
 venv*/
@@ -18,4 +19,5 @@ venv*/
 *.code-workspace
 
 # default data folder
-/data/
+/root_dir/
+FAQ.txt
