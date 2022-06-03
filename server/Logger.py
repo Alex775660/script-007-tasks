@@ -50,15 +50,19 @@ class LoggerInstance:
 
 
 
-    def __init__(self, settings_path: str = os.path.dirname(__file__) + '/logger_default_settings.json') -> None:
+    def __init__(self, logger_settings: dict) -> None:
         """Init logger.
 
         Args:
-            settings_path (str): logger settings path
+            logger_settings (str | dict): logger settings path to json file or logger settings json dictionary
+
+        Raises:
+            TypeError: if logger_settings isn't a dictionary (JSON).
 
         """
 
-        with open(settings_path) as settings_file:
-            settings_data = json.load(settings_file)
-            dictConfig(settings_data)
+        if type(logger_settings) is dict:
+            dictConfig(logger_settings)
             self.logger = logging.getLogger()
+        else:
+            raise TypeError("logger_settings isn't a dictionary (JSON)")
