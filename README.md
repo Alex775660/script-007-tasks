@@ -23,8 +23,8 @@ Author is Alex775660.
 
 
 - [x] Read settings from CLI arguments
-- [ ] Read settings from env vars
-- [ ] Read settings from config file
+- [x] Read settings from env vars
+- [x] Read settings from config file
 
 ## Web Service
 
