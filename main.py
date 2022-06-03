@@ -21,10 +21,7 @@ def main():
     )
     args = parser.parse_args()
 
-    config_parser = Config.ConfigParser()
-    config_parser.parse_config_from_ENV()
-    config_parser.parse_config_from_default_JSON()
-    config_parser.parse_config_from_CLI(args)
+    config_parser = Config.ConfigParser(args)
 
     logger = Logger.LoggerInstance(config_parser.config_json["logger_settings"])
 

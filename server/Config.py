@@ -47,3 +47,15 @@ class ConfigParser:
             all_settings = json.load(settings_file)
             self.config_json["user_settings"] = all_settings["user_settings"]
             self.config_json["logger_settings"] = all_settings["logger_settings"]
+
+    def __init__(self, args: argparse.Namespace)-> None:
+        """Parse program configurations from ENV, JSON, CLI.
+
+        Args:
+            args (argparse.Namespace): CLI arguments
+
+        """
+
+        self.parse_config_from_ENV()
+        self.parse_config_from_default_JSON()
+        self.parse_config_from_CLI(args)
