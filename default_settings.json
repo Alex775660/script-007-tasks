@@ -1,6 +1,8 @@
 {
     "user_settings": {
-        "user_directory": "user"
+        "user_directory": "user",
+        "host": "127.0.0.1",
+        "port": 80
     },
     "logger_settings": {
         "version": 1,
