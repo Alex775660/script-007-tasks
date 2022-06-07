@@ -1,6 +1,8 @@
 {
     "user_settings": {
-        "user_directory": "user"
+        "user_directory": "user",
+        "host": "127.0.0.1",
+        "port": 80
     },
     "logger_settings": {
         "version": 1,
@@ -15,7 +17,7 @@
         "handlers": {
             "console": {
                 "class": "logging.StreamHandler",
-                "level": "INFO",
+                "level": "DEBUG",
                 "formatter": "default",
                 "stream": "ext://sys.stdout"
             },
@@ -30,7 +32,10 @@
         },
         "root": {
             "level": "DEBUG",
-            "handlers": ["console", "file"]
+            "handlers": [
+                "console",
+                "file"
+            ]
         }
     }
 }
