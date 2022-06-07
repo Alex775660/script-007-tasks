@@ -1,6 +1,9 @@
+import logging
 import os
 import time
+
 import server.utils.files as file_exception
+
 
 class FileService:
     def change_dir(self, path: str, autocreate: bool = True) -> None:
@@ -15,6 +18,7 @@ class FileService:
             ValueError: if path is invalid.
         """
 
+        self.logger.debug(f'change_dir(path={path})')
         if type(path) != str:
             raise TypeError(f'incorrect type: {type(path)}')
         elif not os.path.exists(os.path.join(self.root_dir, path)) and not autocreate:
@@ -38,6 +42,7 @@ class FileService:
             - size (int): size of file in bytes.
         """
 
+        self.logger.debug(f'get_files (directory={os.getcwd()})')
         files = []
         for file in os.listdir(os.getcwd()):
             if os.path.isfile(os.path.join(os.getcwd(), file)):
@@ -72,6 +77,7 @@ class FileService:
             ValueError: if filename is invalid.
         """
 
+        self.logger.debug(f'get_file_data (filename={filename}) from (directory={os.getcwd()})')
         file_exception.filename_is_invalid(filename)
         file_exception.file_does_not_exist(filename)
         return {
@@ -101,6 +107,7 @@ class FileService:
             ValueError: if filename is invalid.
         """
 
+        self.logger.debug(f'create_file (filename={filename}) in (directory={os.getcwd()})')
         file_exception.filename_is_invalid(filename)
         if os.path.exists(filename):
             raise RuntimeError("file already exist")  # if file already exist
@@ -126,6 +133,7 @@ class FileService:
             ValueError: if filename is invalid.
         """
 
+        self.logger.debug(f'delete_file (filename={filename}) from (directory={os.getcwd()})')
         file_exception.filename_is_invalid(filename)
         file_exception.file_does_not_exist(filename)
         os.remove(filename)
@@ -135,3 +143,4 @@ class FileService:
             os.makedirs(os.path.dirname(__file__) + "/../root_dir")
         os.chdir(os.path.dirname(__file__) + "/../root_dir")  #set root_dir
         self.root_dir = os.getcwd()
+        self.logger = logging.getLogger('FileService')
